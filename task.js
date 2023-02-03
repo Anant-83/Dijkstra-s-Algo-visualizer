@@ -19,20 +19,36 @@ var svg = d3.select("body")
 .append('svg')
 .attr("width",width)
 .attr("height",height);
-function addd()
+
+
+var s,d;
+function adding()
 {
-  s = parseInt(prompt("Enter source vertex"));
-  d = parseInt(prompt("Enter Destination vertex"));
-  if(s < 0 || d < 0 || s >= n || d >= n)
-  {
-    alert("There is no vertex with this source or destination");
-    return;
+  // var s = parseInt(prompt("er:"));
+  // var d = parseInt(prompt("er:"));
+  s = parseInt(document.getElementById("src").value);
+  d = parseInt(document.getElementById("dst").value);
+  // console.log("Hii")
+  console.log(s);
+  console.log(d);
+    if(s < 0 || d < 0 || s >= n || d >= n)
+    {
+      alert("Invalid Source or Destination Vertex!!");
+      document.getElementById("src").value = ' ';
+      document.getElementById("dst").value = ' ';
+      modal.style.display = "none";
+      return;
+    }
+    links.push({source : s , target : d});
+    console.log(s);
+    console.log(d);
+    reset(links)
+    console.log(links.length);
+    document.getElementById("src").value = ' ';
+    document.getElementById("dst").value = ' ';
+    modal.style.display = "none";
   }
-  links.push({source : s , target : d});
-  reset(links)
-  console.log(links.length);
-}
-var lines
+  var lines
 var src = -1 , dst = -1;
 
 
