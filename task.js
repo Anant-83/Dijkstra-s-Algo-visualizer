@@ -158,7 +158,7 @@ function Dijkstra(source)
       {
         console.log(dis1 + dis[cur_node]);
         dis[nodee] = dis[cur_node] + dis1;
-        pq.Push(nodee);
+        pq.Push(dis[nodee],nodee);
       }
     }
   }
