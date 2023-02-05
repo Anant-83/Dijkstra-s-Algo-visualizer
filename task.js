@@ -2,11 +2,88 @@ const height = 600,
       width  = 600;
 
 
+class Graph{
+      constructor() {
+        this.edges = {};
+        this.nodes = [];
+      }
+
+      add_node(node)
+      {
+        this.nodes.push(node);
+        this.edges[node] = [];
+      }
+
+      add_edge(source, destination , weight)
+      {
+        this.edges[source].push({node: destination, weight: weight});
+      }
+}   
+
+
+
+
+class QElement {
+  constructor(distance, node) {
+        this.distance = distance;
+        this.node = node;
+  }
+}
+class PriorityQueue {
+  constructor() {
+        this.items = [];
+  }
+  Push(distance,node){
+        var qElement = new QElement(distance,node);
+        var contain = false;
+  
+        for(var i = 0;i<this.items.length;i++){
+              if(this.items[i].distance > qElement.distance){
+                    this.items.splice(i,0,qElement);
+                    contain = true;
+                    break;
+              }
+        }
+
+        if(contain == false){
+              this.items.push(qElement);
+        }
+  }
+  isEmpty(){
+        return this.items.length == 0;
+  }
+  Pop(){
+        if(this.isEmpty()){
+              console.log("No element in priority queue");
+              return;
+        }
+        this.items.shift();
+  }
+  Top(){
+        if(this.isEmpty()){
+              console.log("No element in priority queue");
+              return;
+        }
+        return this.items[0];
+  }
+  printPQ(){
+        if(this.isEmpty()){
+              console.log("No element in priority queue");
+              return;
+        }
+        for(var i=0;i<this.items.length;i++){
+              console.log("("+this.items[i].distance+","+this.items[i].node+")");
+        }
+  }
+}
+var g = new Graph();
+var pq = new PriorityQueue();
 var n = parseInt(prompt("Enter number of vertex :- "));
 var nodes = [];
 
-for(var i=0 ;i<n; i++)
+for(var i=0 ; i<n; i++)
 {
+  g.add_node(i);
   nodes[i] = {'id' : i , reflexive: true};
 }
 var links = [
@@ -28,27 +105,70 @@ function adding()
   // var d = parseInt(prompt("er:"));
   s = parseInt(document.getElementById("src").value);
   d = parseInt(document.getElementById("dst").value);
+  w = parseInt(document.getElementById("wgt").value);
   // console.log("Hii")
-  console.log(s);
-  console.log(d);
-    if(s < 0 || d < 0 || s >= n || d >= n)
-    {
-      alert("Invalid Source or Destination Vertex!!");
-      document.getElementById("src").value = ' ';
-      document.getElementById("dst").value = ' ';
-      modal.style.display = "none";
-      return;
-    }
-    links.push({source : s , target : d});
-    console.log(s);
-    console.log(d);
-    reset(links)
-    console.log(links.length);
+
+  if(s < 0 || d < 0 || s >= n || d >= n)
+  {
+    alert("Invalid Source or Destination Vertex!!");
     document.getElementById("src").value = ' ';
     document.getElementById("dst").value = ' ';
+    document.getElementById("wgt").value = ' ';
     modal.style.display = "none";
+    return;
   }
-  var lines
+  links.push({source : s , target : d});
+  g.add_edge(s,d,w);
+  // console.log(s);
+  // console.log(d);
+  reset(links)
+  // var ans = Dijkstra(0);
+  // console.log(ans)
+  document.getElementById("src").value = ' ';
+  document.getElementById("dst").value = ' ';
+  document.getElementById("wgt").value = ' ';
+  modal.style.display = "none";
+}
+
+
+var main_source = 0;
+function Dijkstra(source)
+{
+  var dis = [];
+  for(var i = 0; i  < n ; i++)
+  {
+    dis[i] = 100001;
+  }
+  dis[source] = 0;
+  var pq = new PriorityQueue();
+  pq.Push(0,source);
+  while(!pq.isEmpty())
+  {
+    var cur_node = pq.Top().node;
+    var cur_dis = pq.Top().distance;
+    console.log(pq.Top())
+    pq.Pop();
+    for(var i = 0; i < g.edges[cur_node].length; i++)
+    {
+      var nodee = g.edges[cur_node][i].node;
+      var dis1 = g.edges[cur_node][i].weight;
+      console.log(dis1)
+      console.log(nodee)
+      if(dis[nodee] > dis[cur_node] + dis1)
+      {
+        console.log(dis1 + dis[cur_node]);
+        dis[nodee] = dis[cur_node] + dis1;
+        pq.Push(nodee);
+      }
+    }
+  }
+
+  console.log(dis);
+  return dis;
+
+}
+
+var lines
 var src = -1 , dst = -1;
 
 
@@ -89,7 +209,7 @@ var force = d3.layout.force()
                 lines.enter()
                 .append('line')
                 .transition()
-                .attr('stroke','black');  
+                .attr('stroke','yellow');  
                 
                 lines.exit()
                 .transition()
